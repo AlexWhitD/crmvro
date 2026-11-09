@@ -8,9 +8,10 @@
  * propio…), que es la única frontera con el LLM que admite la constitución.
  */
 
+export const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai";
 export const OPENROUTER_BASE_URL = "https://openrouter.ai/api";
 
-export const AI_PROVIDERS = ["openrouter", "openai_compatible"] as const;
+export const AI_PROVIDERS = ["gemini", "openrouter", "openai_compatible"] as const;
 export type AiProviderId = (typeof AI_PROVIDERS)[number];
 
 export const AI_STATUSES = [
@@ -30,6 +31,13 @@ export type AiProviderPreset = {
 };
 
 export const AI_PROVIDER_PRESETS: Record<AiProviderId, AiProviderPreset> = {
+  gemini: {
+    id: "gemini",
+    label: "Google Gemini (AI Studio)",
+    baseUrl: GEMINI_BASE_URL,
+    modelPlaceholder: "gemini-1.5-flash",
+    tokenPlaceholder: "AIzaSy…",
+  },
   openrouter: {
     id: "openrouter",
     label: "OpenRouter",
@@ -54,9 +62,10 @@ export const AI_STATUS_LABEL: Record<AiStatus, string> = {
 
 /** A qué preset corresponde una base URL (la del entorno o una guardada). */
 export function presetDeBaseUrl(baseUrl: string): AiProviderId {
-  return apiRoot(baseUrl) === apiRoot(OPENROUTER_BASE_URL)
-    ? "openrouter"
-    : "openai_compatible";
+  const root = apiRoot(baseUrl);
+  if (root === apiRoot(GEMINI_BASE_URL)) return "gemini";
+  if (root === apiRoot(OPENROUTER_BASE_URL)) return "openrouter";
+  return "openai_compatible";
 }
 
 /**
@@ -70,6 +79,9 @@ export function presetDeBaseUrl(baseUrl: string): AiProviderId {
  */
 export function apiRoot(baseUrl: string): string {
   const sinBarra = baseUrl.trim().replace(/\/+$/, "");
+  if (sinBarra.includes("generativelanguage.googleapis.com")) {
+    return sinBarra;
+  }
   return /\/v1$/i.test(sinBarra) ? sinBarra : `${sinBarra}/v1`;
 }
 

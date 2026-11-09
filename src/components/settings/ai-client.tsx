@@ -64,9 +64,9 @@ const BADGE_DE_ESTADO: Record<AiStatus, "success" | "warning" | "destructive"> =
 
 export function AiClient() {
   const [vista, setVista] = useState<Vista | null>(null);
-  const [provider, setProvider] = useState<AiProviderId>("openrouter");
+  const [provider, setProvider] = useState<AiProviderId>("gemini");
   const [baseUrl, setBaseUrl] = useState("");
-  const [model, setModel] = useState("");
+  const [model, setModel] = useState("gemini-1.5-flash");
   const [token, setToken] = useState("");
   const [ocupado, setOcupado] = useState<Ocupado>(null);
   const [mensaje, setMensaje] = useState<Mensaje | null>(null);
@@ -463,7 +463,24 @@ function AyudaLlave({ provider }: { provider: AiProviderId }) {
   return (
     <details className="rounded-lg border p-3 text-sm">
       <summary className="cursor-pointer font-medium">¿Cómo consigo mi llave?</summary>
-      {provider === "openrouter" ? (
+      {provider === "gemini" ? (
+        <ol className="mt-3 list-decimal space-y-2 pl-5 text-muted-foreground">
+          <li>
+            Entra a{" "}
+            <a className="underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">
+              aistudio.google.com/apikey
+            </a>{" "}
+            con tu cuenta de Google.
+          </li>
+          <li>
+            Haz clic en <strong>Create API key</strong> (o Get API key) y copia la llave gratuita (<code className="font-mono">AIzaSy…</code>).
+          </li>
+          <li>
+            Pégala aquí con el modelo <code className="font-mono">gemini-1.5-flash</code> (o <code className="font-mono">gemini-2.0-flash</code>).
+          </li>
+          <li>Pulsa «Probar conexión» y luego «Guardar».</li>
+        </ol>
+      ) : provider === "openrouter" ? (
         <ol className="mt-3 list-decimal space-y-2 pl-5 text-muted-foreground">
           <li>
             Crea una cuenta del negocio en{" "}
